@@ -2,6 +2,7 @@ package com.appvillis.nicegram
 
 import android.content.Context
 import com.appvillis.assistant_core.view.NgWidgetsEntryPoint
+import com.appvillis.core_domain.usecase.call
 import dagger.hilt.EntryPoints
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -15,14 +16,12 @@ object NgWidgetsTrackerHelper {
         val entryPoints = entryPoint(context)
 
         entryPoints.appScope().launch {
-            entryPoints.pinnedBannerManager().apply {
-                if (isVisible) {
-                    Timber.d("onBannerVisible")
-                    onBannerVisible()
-                } else {
-                    onExitFromScreen()
-                    Timber.d("onExitFromScreen")
-                }
+            if (isVisible) {
+                Timber.d("onBannerVisible")
+                entryPoints.trackPinnedBannerShownUseCase().call()
+            } else {
+                entryPoints.trackPinnedBannerHiddenUseCase().call()
+                Timber.d("onExitFromScreen")
             }
         }
     }

@@ -62,7 +62,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appvillis.assistant_core.MainActivity;
-import com.appvillis.feature_nicegram_client.presentation.premium.NicegramPremiumActivity;
+import com.appvillis.feature_nicegram_billing.presentation.NicegramPremiumActivity;
 import com.appvillis.feature_telegram_session.api.TelegramSessionSource;
 import com.appvillis.nicegram.NicegramBillingHelper;
 import com.google.common.collect.Lists;

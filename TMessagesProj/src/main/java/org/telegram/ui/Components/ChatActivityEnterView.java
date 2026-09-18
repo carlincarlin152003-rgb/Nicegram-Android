@@ -5187,7 +5187,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                 }
                 String textForTranslation = messageEditText.getText().toString();
                 String toLang = PrefsHelper.INSTANCE.getTranslateLanguageToShortName(currentAccount,parentFragment.getDialogId());
-                NicegramTranslator.INSTANCE.translate(textForTranslation, toLang, s -> {
+                NicegramTranslator.INSTANCE.translate(getContext(), textForTranslation, toLang, s -> {
                     if (s == null) {
                         translationCallback.error();
                         return Unit.INSTANCE;

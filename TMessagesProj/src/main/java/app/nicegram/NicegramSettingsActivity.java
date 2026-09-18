@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.appvillis.core_domain.entry.placements.PinnedChatsPlacementEntry;
+import com.appvillis.core_domain.entry.placement.PinnedChatsPlacementEntry;
 import com.appvillis.feature_account_export.ExportAccountsBottomSheetFragment;
 import com.appvillis.feature_account_export.domain.Account;
 import com.appvillis.feature_ai_shortcuts.AiShortcutsEntryPoint;

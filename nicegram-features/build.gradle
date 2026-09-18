@@ -72,8 +72,8 @@ dependencies {
     implementation(internalLibs.retrofit.converter.gson)
     implementation(internalLibs.okhttp.logging)
 
-    // Jsoup
-    implementation(internalLibs.jsoup)
+    // Gson
+    implementation(internalLibs.gson)
 
     // UI
     implementation(internalLibs.androidx.constraintlayout)

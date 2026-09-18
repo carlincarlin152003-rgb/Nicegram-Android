@@ -2,6 +2,7 @@ package com.appvillis.nicegram
 
 import android.content.Context
 import com.appvillis.core_domain.usecase.call
+import com.appvillis.core_domain.usecase.placement.GetChatPlacementsUseCase
 import com.appvillis.feature_nicegram_assistant.domain.SpecialOffersRepository
 import dagger.hilt.EntryPoints
 
@@ -30,14 +31,8 @@ object NicegramAssistantHelper {
         return getSpecialOfferUseCase.allOffers.find { it.id == id }
     }
 
-    fun getPossibleChatPlacements(context: Context, isRestricted: Boolean, hasNgPremium: Boolean) =
-        entryPoint(context).getChatPlacementsUseCase().invoke()
-            .filter { placement ->
-                val isChatTypeMatch = if (isRestricted) placement.showInRestrictedChat else placement.showInChat
-                val isUserTypeMatch =
-                    if (hasNgPremium) placement.showToPremium else true // Предполагаем, что все могут видеть непремиум-контент
-                isChatTypeMatch && isUserTypeMatch
-            }
+    fun getPossibleChatPlacements(context: Context, isRestricted: Boolean) =
+        entryPoint(context).getChatPlacementsUseCase()(GetChatPlacementsUseCase.Params(isRestricted))
 
     fun getEsimSplashData(context: Context) = entryPoint(context).aiChatRemoteConfigRepo().esimSplashData
 

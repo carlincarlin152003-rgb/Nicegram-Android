@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
 import com.appvillis.feature_nicegram_billing.presentation.NicegramPremiumFragment
-import com.appvillis.feature_nicegram_client.TgThemeHelper
+import com.appvillis.core_ui.domain.TgThemeHelper
 import com.appvillis.core_ui.util.clearLightStatusBar
 import com.appvillis.core_ui.util.isNightMode
 import com.appvillis.core_ui.util.setLightStatusBar
@@ -28,10 +28,10 @@ class NicegramPremiumActivity : AppCompatActivity() {
         window.navigationBarColor = Color.parseColor("#131417")
         setTransparentStatusBar()
 
-        setContentView(R.layout.activity_nicegram_fragment)
+        setContentView(com.appvillis.core_ui.R.layout.activity_nicegram_fragment)
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainerView, NicegramPremiumFragment.newInstance(intent.getBooleanExtra(EXTRA_SHOW_CONTINUE_BTN, false)))
+            .replace(com.appvillis.core_ui.R.id.fragmentContainerView, NicegramPremiumFragment.newInstance(intent.getBooleanExtra(EXTRA_SHOW_CONTINUE_BTN, false)))
             .commit()
 
         if (this.isNightMode()) {

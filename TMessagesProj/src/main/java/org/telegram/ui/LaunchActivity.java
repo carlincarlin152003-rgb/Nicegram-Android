@@ -104,7 +104,7 @@ import com.appvillis.nicegram.AiChatBotHelper;
 import com.appvillis.core_analytics.AnalyticsHelper;
 import com.appvillis.nicegram.NicegramAssistantHelper;
 import com.appvillis.feature_nicegram_client.presentation.onboarding.NicegramOnboardingActivity;
-import com.appvillis.feature_nicegram_client.presentation.premium.NicegramPremiumActivity;
+import com.appvillis.feature_nicegram_billing.presentation.NicegramPremiumActivity;
 import com.appvillis.nicegram_wallet.wallet_contacts.domain.WalletContact;
 import com.appvillis.nicegram_wallet.wallet_tonconnect.domain.TcDeeplinkManager;
 import com.google.android.gms.common.api.Status;

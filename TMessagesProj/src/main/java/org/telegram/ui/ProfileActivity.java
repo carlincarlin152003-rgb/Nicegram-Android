@@ -141,7 +141,7 @@ import com.appvillis.feature_nicegram_client.NicegramClientHelper;
 import com.appvillis.core_analytics.AnalyticsHelper;
 import com.appvillis.nicegram.NicegramBillingHelper;
 import com.appvillis.nicegram.network.NicegramNetwork;
-import com.appvillis.feature_nicegram_client.presentation.premium.NicegramPremiumActivity;
+import com.appvillis.feature_nicegram_billing.presentation.NicegramPremiumActivity;
 import com.appvillis.nicegram_wallet.destinations.SendSelectICScreenDestination;
 import com.appvillis.nicegram_wallet.module_bridge.NgWalletEntryPoint;
 import com.appvillis.nicegram_wallet.wallet_contacts.domain.WalletContact;

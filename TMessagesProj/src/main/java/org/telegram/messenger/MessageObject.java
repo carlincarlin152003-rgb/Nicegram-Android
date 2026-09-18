@@ -13078,7 +13078,7 @@ public class MessageObject {
                 callback.changed("");
                 return;
             }
-            NicegramTranslator.INSTANCE.translate(text, toLang, s -> {
+            NicegramTranslator.INSTANCE.translate(ApplicationLoader.applicationContext, text, toLang, s -> {
                 if (s == null) {
                     callback.error();
                     return Unit.INSTANCE;

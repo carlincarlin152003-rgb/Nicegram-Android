@@ -28,13 +28,15 @@ import com.appvillis.core_domain.VerificationManager
 import com.appvillis.nicegram_wallet.wallet_storage.domain.GetCurrentWalletUseCase
 import com.appvillis.nicegram_wallet.wallet_tonconnect.domain.TcDeeplinkManager
 import com.appvillis.nicegram_wallet.wallet_tonconnect.domain.WalletPopupActivityLauncher
-import com.appvillis.core_domain.usecase.placements.GetChatPlacementsUseCase
+import com.appvillis.core_domain.usecase.placement.GetChatPlacementsUseCase
 import com.appvillis.core_common.DispatchersProvider
 import com.appvillis.core_domain.usecase.telegramsession.IsNeedToShowTelegramSessionBackupUseCase
 import com.appvillis.core_domain.usecase.telegramsession.IsSystemTelegramSessionUseCase
 import com.appvillis.core_domain.usecase.telegramsession.IsTelegramSessionEnabledUseCase
-import com.appvillis.core_domain.usecase.placements.GetPinChatsPlacementsUseCase
-import com.appvillis.core_domain.usecase.placements.HidePlacementUseCase
+import com.appvillis.core_domain.usecase.translate.TranslateTextUseCase
+import com.appvillis.core_domain.usecase.placement.GetAllPinChatsPlacementsUseCase
+import com.appvillis.core_domain.usecase.placement.IsPinChatsPlacementHiddenUseCase
+import com.appvillis.core_domain.usecase.placement.SetPinChatsPlacementHiddenUseCase
 import com.appvillis.rep_user_actions.domain.usecases.SaveUserActionUseCase
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -54,8 +56,9 @@ interface NicegramAssistantEntryPoint {
     fun setDemoUserUseCase(): SetDemoUserUseCase
     fun getNicegramOnboardingStatusUseCase(): GetNicegramOnboardingStatusUseCase
     fun getChatPlacementsUseCase(): GetChatPlacementsUseCase
-    fun getPinChatsPlacementsUseCase(): GetPinChatsPlacementsUseCase
-    fun hidePlacementUseCase(): HidePlacementUseCase
+    fun getAllPinChatsPlacementsUseCase(): GetAllPinChatsPlacementsUseCase
+    fun isPinChatsPlacementHiddenUseCase(): IsPinChatsPlacementHiddenUseCase
+    fun setPinChatsPlacementHiddenUseCase(): SetPinChatsPlacementHiddenUseCase
     fun userRepository(): UserRepository
     fun collectGroupInfoUseCase(): CollectGroupInfoUseCase
     fun ngClientRemoteConfigRepo(): NgClientRemoteConfigRepo
@@ -95,4 +98,5 @@ interface NicegramAssistantEntryPoint {
     fun aiChatRemoteConfigRepo(): AiChatRemoteConfigRepo
     // end region
     fun checkIfNeedToCompleteAutoLoginUseCase(): CheckIfNeedToCompleteAutoLoginUseCase
+    fun translateTextUseCase(): TranslateTextUseCase
 }

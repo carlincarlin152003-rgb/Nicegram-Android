@@ -52,10 +52,12 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.util.Consumer;
 
 import com.appvillis.assistant_core.MainActivity;
+import com.appvillis.core_domain.entry.placement.ChatPlacementEntry;
 import com.appvillis.core_ui.Intents;
 import com.appvillis.core_ui.widgets.ToastViewHelper;
 import com.appvillis.feature_ai_chat.domain.entry.EsimSplashData;
 import com.appvillis.feature_nicegram_assistant.UnblockChatBannerToastView;
+import com.appvillis.feature_placement.api.presentation.ChatPlacementBannerToastView;
 import com.appvillis.nicegram.NicegramAssistantHelper;
 import com.appvillis.nicegram.network.NicegramNetwork;
 
@@ -148,6 +150,7 @@ import java.util.stream.Collectors;
 import me.vkryl.core.BitwiseUtils;
 
 import app.nicegram.NicegramDoubleBottom;
+import app.nicegram.PrefsHelper;
 import app.nicegram.bridge.TgBridgeEntryPoint;
 import dagger.hilt.EntryPoints;
 import kotlin.Unit;
@@ -22803,6 +22806,7 @@ public class MessagesController extends BaseController implements NotificationCe
             boolean forAllPlatform = false;
             boolean isRestrictedChat = false;
             EsimSplashData esimBannerData = null;
+            ChatPlacementEntry chatPlacement = null;
             Runnable action = null;
 
             reason = getRestrictionReason(chat.restriction_reason);
@@ -22823,12 +22827,40 @@ public class MessagesController extends BaseController implements NotificationCe
                 }
             }
 
+            // Only the restricted-chat case belongs here: such a chat never opens, so this fragment stays
+            // visible and the toast survives. The showInChat case is handled by ChatActivity, because
+            // DialogsActivity.onPause() calls ToastViewHelper.clearToasts() as soon as a chat opens.
+            if (isRestrictedChat && esimBannerData == null) {
+                for (ChatPlacementEntry placement : NicegramAssistantHelper.INSTANCE.getPossibleChatPlacements(fragment.getContext(), true)) {
+                    if (PrefsHelper.INSTANCE.canShowChatBannerWithId(fragment.getContext(), placement.getId())) {
+                        chatPlacement = placement;
+                        final ChatPlacementEntry finalPlacement = placement;
+                        action = () -> Intents.INSTANCE.openUrlThisAppIfPossible(fragment.getParentActivity(), finalPlacement.getUrlAndroid());
+                        PrefsHelper.INSTANCE.setCdForChatBannerWithId(fragment.getContext(), placement.getShowAgainAfterSeconds(), placement.getId());
+
+                        break;
+                    }
+                }
+            }
+
             Runnable finalAction = action;
             if (esimBannerData != null) {
                 UnblockChatBannerToastView toastView = UnblockChatBannerToastView.Companion.newInstance(
                         fragment.getParentActivity(),
                         () -> {
                             if (fragment == null || fragment.getParentActivity() == null || finalAction == null) return Unit.INSTANCE;
+
+                            finalAction.run();
+                            return Unit.INSTANCE;
+                        }
+                );
+                ToastViewHelper.INSTANCE.showViewToast(toastView, fragment.getFragmentView(), true, false, AndroidUtilities.dp(24));
+            } else if (chatPlacement != null) {
+                ChatPlacementBannerToastView toastView = ChatPlacementBannerToastView.Companion.newInstance(
+                        fragment.getParentActivity(),
+                        chatPlacement,
+                        () -> {
+                            if (fragment.getParentActivity() == null || finalAction == null) return Unit.INSTANCE;
 
                             finalAction.run();
                             return Unit.INSTANCE;

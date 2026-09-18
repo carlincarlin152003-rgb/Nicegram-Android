@@ -149,7 +149,7 @@ import app.nicegram.NicegramAnalyticsHelper;
 import app.nicegram.NicegramAttHelper;
 import app.nicegram.NicegramGroupCollectHelper;
 import app.nicegram.NicegramMetadataHelper;
-import com.appvillis.feature_nicegram_client.presentation.premium.NicegramPremiumActivity;
+import com.appvillis.feature_nicegram_billing.presentation.NicegramPremiumActivity;
 import com.appvillis.nicegram.NicegramIcWalletHelper;
 import com.appvillis.nicegram_wallet.wallet_inchat.external.TransactionTgMessageView;
 import com.appvillis.rep_user_actions.domain.entities.AttUserAction;
@@ -598,6 +598,7 @@ public class ChatActivity extends BaseFragment implements
     //region Nicegram in-chat Pin ad banner
     private com.appvillis.assistant_core.view.ChatHeaderAdView ncgPinAdView;
     private com.appvillis.assistant_core.view.ChatHeaderAdHelper ncgPinAdHelper;
+    private boolean ncgChatPlacementShown; // nicegram
     //endregion
     private TextView chatWithAdminTextView;
     private FragmentContextView fragmentContextView;
@@ -27221,6 +27222,7 @@ public class ChatActivity extends BaseFragment implements
     public void onBecomeFullyVisible() {
         isFullyVisible = true;
         super.onBecomeFullyVisible();
+        showNcgChatPlacementBanner(); // nicegram
         if (showCloseChatDialogLater) {
             showDialog(closeChatDialog);
         }
@@ -27243,6 +27245,46 @@ public class ChatActivity extends BaseFragment implements
                 .show(true);
         }
     }
+
+    // region nicegram chat placement
+    /**
+     * Shows a chatPlacement banner for a chat the user was able to open. It lives here rather than in
+     * MessagesController.checkCanOpenChat because DialogsActivity.onPause() calls
+     * ToastViewHelper.clearToasts(), which would wipe a banner attached before the transition.
+     * Restricted chats never reach this point and are handled in checkCanOpenChat instead.
+     */
+    private void showNcgChatPlacementBanner() {
+        if (ncgChatPlacementShown || currentChat == null || chatMode != 0 || currentEncryptedChat != null) {
+            return;
+        }
+        if (getParentActivity() == null || getFragmentView() == null || getContext() == null) {
+            return;
+        }
+        ncgChatPlacementShown = true;
+
+        for (com.appvillis.core_domain.entry.placement.ChatPlacementEntry placement :
+                com.appvillis.nicegram.NicegramAssistantHelper.INSTANCE.getPossibleChatPlacements(getContext(), false)) {
+            if (!app.nicegram.PrefsHelper.INSTANCE.canShowChatBannerWithId(getContext(), placement.getId())) {
+                continue;
+            }
+            app.nicegram.PrefsHelper.INSTANCE.setCdForChatBannerWithId(getContext(), placement.getShowAgainAfterSeconds(), placement.getId());
+
+            com.appvillis.feature_placement.api.presentation.ChatPlacementBannerToastView toastView =
+                    com.appvillis.feature_placement.api.presentation.ChatPlacementBannerToastView.Companion.newInstance(
+                            getParentActivity(),
+                            placement,
+                            () -> {
+                                if (getParentActivity() != null) {
+                                    com.appvillis.core_ui.Intents.INSTANCE.openUrlThisAppIfPossible(getParentActivity(), placement.getUrlAndroid());
+                                }
+                                return kotlin.Unit.INSTANCE;
+                            }
+                    );
+            com.appvillis.core_ui.widgets.ToastViewHelper.INSTANCE.showViewToast(toastView, getFragmentView(), true, false, AndroidUtilities.dp(24));
+            break;
+        }
+    }
+    // endregion
 
     private boolean shownConversionDateTimeToast;
     private void checkConversionDateTimeToast() {
