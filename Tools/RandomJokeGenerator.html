@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Random Joke Generator</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      display: grid;
+      min-height: 100vh;
+      margin: 0;
+      place-items: center;
+      padding: 1.5rem;
+    }
+
+    .card {
+      width: min(100%, 44rem);
+      padding: clamp(1.5rem, 5vw, 3rem);
+      border: 1px solid #dbe3f0;
+      border-radius: 1.25rem;
+      background: #fff;
+      box-shadow: 0 1rem 3rem rgb(35 58 99 / 12%);
+      text-align: center;
+    }
+
+    h1 { margin: 0 0 .5rem; font-size: clamp(1.8rem, 5vw, 2.8rem); }
+    .subtitle { margin: 0 0 2rem; color: #61708a; }
+
+    .joke {
+      min-height: 7rem;
+      display: grid;
+      place-items: center;
+      margin: 0 0 1.5rem;
+      padding: 1.5rem;
+      border-radius: .9rem;
+      background: #f0f5ff;
+      font-size: clamp(1.15rem, 3vw, 1.5rem);
+      line-height: 1.5;
+    }
+
+    button {
+      border: 0;
+      border-radius: .7rem;
+      padding: .8rem 1.2rem;
+      background: #3167d9;
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    button:hover { background: #2555bb; }
+    button:focus-visible { outline: 3px solid #91b4ff; outline-offset: 3px; }
+    button:disabled { cursor: wait; opacity: .7; }
+
+    .status { min-height: 1.5rem; margin: 1rem 0 0; color: #61708a; }
+    .error { color: #b42318; }
+
+    @media (prefers-color-scheme: dark) {
+      :root { background: #111827; color: #edf2ff; }
+      .card { border-color: #2d3a52; background: #1b2435; }
+      .subtitle, .status { color: #aab8d0; }
+      .joke { background: #253352; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card" aria-labelledby="title">
+    <h1 id="title">Random Joke Generator</h1>
+    <p class="subtitle">Need a quick laugh? Fetch a random joke from JokeAPI.</p>
+    <p id="joke" class="joke" role="status" aria-live="polite">Click the button to get a joke.</p>
+    <button id="new-joke" type="button">Tell me a joke</button>
+    <p id="status" class="status" aria-live="polite"></p>
+  </main>
+
+  <script>
+    const API_URL = 'https://v2.jokeapi.dev/joke/Any?type=single&safe-mode';
+    const jokeElement = document.querySelector('#joke');
+    const statusElement = document.querySelector('#status');
+    const button = document.querySelector('#new-joke');
+
+    async function loadJoke() {
+      button.disabled = true;
+      statusElement.className = 'status';
+      statusElement.textContent = 'Loading…';
+
+      try {
+        const response = await fetch(API_URL, { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+
+        const data = await response.json();
+        if (data.error || !data.joke) throw new Error('The API returned an invalid joke.');
+
+        jokeElement.textContent = data.joke;
+        statusElement.textContent = `Category: ${data.category}`;
+      } catch (error) {
+        jokeElement.textContent = 'Sorry, the joke service is unavailable right now.';
+        statusElement.className = 'status error';
+        statusElement.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    button.addEventListener('click', loadJoke);
+  </script>
+</body>
+</html>
